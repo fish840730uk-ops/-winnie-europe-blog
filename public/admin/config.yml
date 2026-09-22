@@ -1,0 +1,66 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+locale: "zh-Hant"
+
+collections:
+  - name: "blog_zh"
+    label: "文章 (中文)"
+    folder: "src/content/blog/zh-TW"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    fields:
+      - { label: "標題", name: "title", widget: "string" }
+      - { label: "摘要", name: "description", widget: "text" }
+      - { label: "發布日期", name: "pubDate", widget: "datetime" }
+      - { label: "標籤", name: "tags", widget: "list", default: [] }
+      - { label: "封面圖片", name: "cover", widget: "image", required: false }
+      - { label: "內容", name: "body", widget: "markdown" }
+
+  - name: "blog_en"
+    label: "Blog (English)"
+    folder: "src/content/blog/en"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Publish Date", name: "pubDate", widget: "datetime" }
+      - { label: "Tags", name: "tags", widget: "list", default: [] }
+      - { label: "Cover Image", name: "cover", widget: "image", required: false }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+  - name: "photos"
+    label: "相簿"
+    folder: "src/content/photos"
+    create: true
+    slug: "{{slug}}"
+    extension: "json"
+    format: "json"
+    fields:
+      - { label: "標題", name: "title", widget: "string" }
+      - { label: "照片", name: "image", widget: "image" }
+      - { label: "地點", name: "location", widget: "string" }
+      - { label: "日期", name: "date", widget: "datetime" }
+
+  - name: "places"
+    label: "足跡地圖"
+    folder: "src/content/places"
+    create: true
+    slug: "{{slug}}"
+    extension: "json"
+    format: "json"
+    fields:
+      - { label: "地點名稱", name: "name", widget: "string" }
+      - { label: "緯度", name: "lat", widget: "number", value_type: "float" }
+      - { label: "經度", name: "lng", widget: "number", value_type: "float" }
+      - { label: "描述", name: "description", widget: "text" }
+      - { label: "造訪日期", name: "dateVisited", widget: "datetime", required: false }

@@ -1,5 +1,5 @@
 import { defineCollection, z } from 'astro:content';
-import { glob, file } from 'astro/loaders';
+import { glob } from 'astro/loaders';
 
 const blog = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/blog' }),
@@ -13,9 +13,8 @@ const blog = defineCollection({
 });
 
 const photos = defineCollection({
-  loader: file('./src/content/photos/photos.json'),
+  loader: glob({ pattern: '**/*.json', base: './src/content/photos' }),
   schema: z.object({
-    id: z.string(),
     title: z.string(),
     image: z.string(),
     location: z.string(),
@@ -24,9 +23,8 @@ const photos = defineCollection({
 });
 
 const places = defineCollection({
-  loader: file('./src/content/places/places.json'),
+  loader: glob({ pattern: '**/*.json', base: './src/content/places' }),
   schema: z.object({
-    id: z.string(),
     name: z.string(),
     lat: z.number(),
     lng: z.number(),
