@@ -1,0 +1,41 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { getLangFromUrl, useTranslations, useTranslatedPath } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
+
+const allPosts = await getCollection('blog');
+const posts = allPosts
+  .filter((post) => post.id.startsWith(`${lang.toLowerCase()}/`))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+
+<Layout title={t('nav.home')}>
+  <section class="hero">
+    <h1>{t('site.title')}</h1>
+    <p>{t('site.tagline')}</p>
+  </section>
+
+  <section>
+    <h2>{t('home.recentPosts')}</h2>
+    <ul class="post-list">
+      {posts.map((post) => {
+        const slug = post.id.split('/').slice(1).join('/');
+        return (
+          <li class="post-card">
+            <h2><a href={translatePath(`/blog/${slug}`)}>{post.data.title}</a></h2>
+            <div class="post-meta">
+              {post.data.pubDate.toLocaleDateString(lang)}
+            </div>
+            <p class="excerpt">{post.data.description}</p>
+            <a href={translatePath(`/blog/${slug}`)}>{t('home.readMore')} →</a>
+          </li>
+        );
+      })}
+    </ul>
+  </section>
+</Layout>

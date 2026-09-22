@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "astro-dev",
+      "runtimeExecutable": "cmd.exe",
+      "runtimeArgs": ["/c", "C:\\Users\\fish8\\OneDrive\\桌面\\Winnie 網站 Claude\\scripts\\dev.bat"],
+      "port": 4321
+    }
+  ]
+}

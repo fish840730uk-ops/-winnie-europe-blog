@@ -1,0 +1,29 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { getLangFromUrl, useTranslations } from '../../../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const photos = (await getCollection('photos')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<Layout title={t('gallery.title')}>
+  <div class="page-heading">
+    <h1>{t('gallery.title')}</h1>
+    <p>{t('gallery.subtitle')}</p>
+  </div>
+  <div class="gallery-grid">
+    {photos.map((photo) => (
+      <figure class="gallery-item">
+        <img src={photo.data.image} alt={photo.data.title} loading="lazy" />
+        <figcaption class="gallery-caption">
+          {photo.data.title} · {photo.data.location}
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+</Layout>

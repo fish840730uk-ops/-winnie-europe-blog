@@ -1,0 +1,35 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { getLangFromUrl, useTranslations, useTranslatedPath } from '../../../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
+
+const allPosts = await getCollection('blog');
+const posts = allPosts
+  .filter((post) => post.id.startsWith(`${lang.toLowerCase()}/`))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<Layout title={t('nav.blog')}>
+  <div class="page-heading">
+    <h1>{t('blog.allPosts')}</h1>
+  </div>
+  <ul class="post-list">
+    {posts.map((post) => {
+      const slug = post.id.split('/').slice(1).join('/');
+      return (
+        <li class="post-card">
+          <h2><a href={translatePath(`/blog/${slug}`)}>{post.data.title}</a></h2>
+          <div class="post-meta">
+            {post.data.pubDate.toLocaleDateString(lang)}
+          </div>
+          <p class="excerpt">{post.data.description}</p>
+          {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+        </li>
+      );
+    })}
+  </ul>
+</Layout>

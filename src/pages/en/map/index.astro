@@ -1,0 +1,51 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { getLangFromUrl, useTranslations } from '../../../i18n/utils';
+import 'leaflet/dist/leaflet.css';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const places = await getCollection('places');
+const markers = places.map((place) => ({
+  name: place.data.name,
+  lat: place.data.lat,
+  lng: place.data.lng,
+  description: place.data.description,
+}));
+---
+
+<Layout title={t('map.title')}>
+  <div class="page-heading">
+    <h1>{t('map.title')}</h1>
+    <p>{t('map.subtitle')}</p>
+  </div>
+  <div id="travel-map" data-markers={JSON.stringify(markers)}></div>
+</Layout>
+
+<script>
+  import L from 'leaflet';
+
+  const el = document.getElementById('travel-map');
+  if (el) {
+    const markers = JSON.parse(el.dataset.markers ?? '[]');
+    const map = L.map(el).setView([48, 10], 4);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 18,
+    }).addTo(map);
+
+    for (const place of markers) {
+      L.circleMarker([place.lat, place.lng], {
+        radius: 8,
+        color: '#2f5d50',
+        fillColor: '#2f5d50',
+        fillOpacity: 0.8,
+      })
+        .addTo(map)
+        .bindPopup(`<strong>${place.name}</strong><br/>${place.description}`);
+    }
+  }
+</script>

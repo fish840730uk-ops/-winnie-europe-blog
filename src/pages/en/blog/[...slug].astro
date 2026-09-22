@@ -1,0 +1,31 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+import { useTranslations, useTranslatedPath } from '../../../i18n/utils';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', (post) => post.id.startsWith('en/'));
+  return posts.map((post) => ({
+    params: { slug: post.id.split('/').slice(1).join('/') },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const lang = 'en' as const;
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
+---
+
+<Layout title={post.data.title} description={post.data.description}>
+  <div class="page-heading">
+    <h1>{post.data.title}</h1>
+    <div class="post-meta">{post.data.pubDate.toLocaleDateString(lang)}</div>
+    {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+  </div>
+  <article class="post-body">
+    <Content />
+  </article>
+  <a class="back-link" href={translatePath('/blog')}>← {t('blog.back')}</a>
+</Layout>

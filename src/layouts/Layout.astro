@@ -1,0 +1,58 @@
+---
+import '../styles/global.css';
+import { getLangFromUrl, useTranslations, useTranslatedPath, otherLang } from '../i18n/utils';
+import { languages } from '../i18n/ui';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = '' } = Astro.props;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const translatePath = useTranslatedPath(lang);
+const altLang = otherLang(lang);
+
+const localePrefix = lang === 'zh-TW' ? '' : `/${lang}`;
+const pathWithoutLocale = localePrefix
+  ? Astro.url.pathname.replace(new RegExp(`^${localePrefix}`), '') || '/'
+  : Astro.url.pathname;
+const altHref = useTranslatedPath(altLang)(pathWithoutLocale, altLang);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} · {t('site.title')}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <a class="brand" href={translatePath('/')}>{t('site.title')}</a>
+        <nav>
+          <a href={translatePath('/')}>{t('nav.home')}</a>
+          <a href={translatePath('/blog')}>{t('nav.blog')}</a>
+          <a href={translatePath('/gallery')}>{t('nav.gallery')}</a>
+          <a href={translatePath('/map')}>{t('nav.map')}</a>
+          <a class="lang-switch" href={altHref}>{languages[altLang]}</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <div class="container">
+        <slot />
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        &copy; {new Date().getFullYear()} {t('site.title')} · {t('footer.rights')}
+      </div>
+    </footer>
+  </body>
+</html>
